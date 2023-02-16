@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CadastroClienteBff.Business;
 using CadastroClienteBff.Controllers.Contracts.Request;
 using CadastroClienteBff.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,9 @@ namespace CadastroClienteBff.Controllers
     [Route("[controller]")]
     public class ClienteController
     {
+        ClienteBusiness c = new ClienteBusiness();
+
+        
         [HttpPost(Name = "GetSss")]
         public Cliente salvarCliente(SalvarClienteRequest request)
         {
@@ -21,6 +25,7 @@ namespace CadastroClienteBff.Controllers
             var mapper = configuration.CreateMapper();
 
             var c = mapper.Map<Cliente>(request);
+            this.c.salvarCliente(c);
             return c;
         }
     }

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "5TBvEHU/a9OiKZIb0GzvHg0UVOsUEf0pjfCkb+OrP7O7/XFzXsezmtH7LcjIjbVypp4ZkepWfLs7WdQTya179w==",
+  "dgSpecHash": "w12WP8ZOiqw7u/DPV4VIXBo4znBMD5mlN2rXgLpuqkS8wNO6ftMr7l6J6FRgG8bgI6vCjm9/Aa9fv71omjQsiw==",
   "success": true,
   "projectFilePath": "C:\\repos\\Cadastro Cliente\\Bff\\CadastroCliente\\CadastroClienteBff\\CadastroClienteBff.csproj",
   "expectedPackageFiles": [
@@ -27,6 +27,8 @@
     "C:\\Users\\vitor\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
     "C:\\Users\\vitor\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.17.0\\microsoft.visualstudio.azure.containers.tools.targets.1.17.0.nupkg.sha512",
     "C:\\Users\\vitor\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\vitor\\.nuget\\packages\\mysqlconnector\\2.2.5\\mysqlconnector.2.2.5.nupkg.sha512",
+    "C:\\Users\\vitor\\.nuget\\packages\\pomelo.entityframeworkcore.mysql\\7.0.0\\pomelo.entityframeworkcore.mysql.7.0.0.nupkg.sha512",
     "C:\\Users\\vitor\\.nuget\\packages\\swashbuckle.aspnetcore\\6.2.3\\swashbuckle.aspnetcore.6.2.3.nupkg.sha512",
     "C:\\Users\\vitor\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.2.3\\swashbuckle.aspnetcore.swagger.6.2.3.nupkg.sha512",
     "C:\\Users\\vitor\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.2.3\\swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",

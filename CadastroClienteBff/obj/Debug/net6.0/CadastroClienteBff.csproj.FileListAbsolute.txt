@@ -51,3 +51,5 @@ C:\repos\Cadastro Cliente\Bff\CadastroCliente\CadastroClienteBff\bin\Debug\net6.
 C:\repos\Cadastro Cliente\Bff\CadastroCliente\CadastroClienteBff\bin\Debug\net6.0\System.Text.Encodings.Web.dll
 C:\repos\Cadastro Cliente\Bff\CadastroCliente\CadastroClienteBff\bin\Debug\net6.0\System.Text.Json.dll
 C:\repos\Cadastro Cliente\Bff\CadastroCliente\CadastroClienteBff\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
+C:\repos\Cadastro Cliente\Bff\CadastroCliente\CadastroClienteBff\bin\Debug\net6.0\MySqlConnector.dll
+C:\repos\Cadastro Cliente\Bff\CadastroCliente\CadastroClienteBff\bin\Debug\net6.0\Pomelo.EntityFrameworkCore.MySql.dll
