@@ -13,7 +13,7 @@ namespace CadastroClienteBff.Controllers
         ClienteBusiness c = new ClienteBusiness();
 
         
-        [HttpPost(Name = "GetSss")]
+        [HttpPost(Name = "SalvarCliente")]
         public Cliente salvarCliente(SalvarClienteRequest request)
         {
             var configuration = new MapperConfiguration(cfg =>
@@ -27,6 +27,13 @@ namespace CadastroClienteBff.Controllers
             var c = mapper.Map<Cliente>(request);
             this.c.salvarCliente(c);
             return c;
+        }
+
+        [HttpGet(Name = "GetClientes")]
+
+        public List<Cliente> getListaCliente()
+        {
+            return c.getListaClientes();
         }
     }
 }
