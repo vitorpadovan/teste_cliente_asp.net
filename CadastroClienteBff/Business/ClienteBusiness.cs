@@ -38,9 +38,9 @@ namespace CadastroClienteBff.Business
             switch (c.tipoDocumento)
             {
                 case Model.Enums.TipoDocumento.Cpf:
-                    return ValidaCPF(c.CpfCnpj.ToString().PadLeft(11,'0'));
+                    return ValidaCPF(c.CpfCnpj.PadLeft(11,'0'));
                 case Model.Enums.TipoDocumento.CNPJ:
-                    return ValidaCNPJ(c.CpfCnpj.ToString());
+                    return ValidaCNPJ(c.CpfCnpj.PadLeft(14,'0'));
                 default:
                     return true;
             }

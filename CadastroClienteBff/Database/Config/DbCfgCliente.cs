@@ -12,7 +12,7 @@ namespace CadastroClienteBff.Database.Config
                 .HasColumnType("varchar(150)")
                 .IsRequired();
             cfg.Property(p => p.CpfCnpj)
-                .HasColumnType("bigint")
+                .HasColumnType("varchar(25)")
                 .IsRequired();
         }
 

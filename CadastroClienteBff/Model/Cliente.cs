@@ -6,7 +6,7 @@ namespace CadastroClienteBff.Model
     {
         public int Id { get; set; }
         public string Nome { get; set; }
-        public long CpfCnpj { get; set; }
+        public string CpfCnpj { get; set; }
         public TipoDocumento tipoDocumento { get; set; }
         public DateOnly dataNascimento { get; set; }
 
