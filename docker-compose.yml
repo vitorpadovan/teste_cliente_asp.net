@@ -26,4 +26,4 @@ services:
       timeout: 10s
       retries: 15
     volumes:
-      - '/data:/var/lib/mysql'
+      - '/home/vitorpadovan/data:/var/lib/mysql'
