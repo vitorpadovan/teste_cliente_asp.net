@@ -11,6 +11,8 @@ namespace CadastroClienteBff.Business
         public void salvarCliente(Cliente cliente)
         {
             var teste = cx.Cliente;
+            if (verificaDataNascimento(cliente))
+                throw new HttpResponseException(400, new HttpException() { codErro = 3, mensagem = "Data de nascimento deve ser menor do que a data atual" });
             if (!documentoValido(cliente))
                 throw new HttpResponseException(400, new HttpException() { codErro = 1, mensagem = "CPF/CNPJ inválido" });
             if (verificarSeJaExiste(cliente))
@@ -23,7 +25,10 @@ namespace CadastroClienteBff.Business
         {
             return cx.Cliente.ToList();
         }
-
+        private bool verificaDataNascimento(Cliente c)
+        {
+            return c.dataNascimento > DateOnly.FromDateTime(DateTime.Now);
+        }
         private bool verificarSeJaExiste(Cliente c)
         {
             return cx.Cliente.Where(p=>p.CpfCnpj == c.CpfCnpj).Any();
