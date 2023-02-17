@@ -12,6 +12,7 @@ builder.Services.AddControllers(options => options.Filters.Add<HttpResponseExcep
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ContextoBanco>();
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -25,5 +26,10 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(x =>x.AllowAnyMethod()
+.AllowAnyHeader()
+.SetIsOriginAllowed(origin => true)
+.AllowCredentials());
 
 app.Run();
