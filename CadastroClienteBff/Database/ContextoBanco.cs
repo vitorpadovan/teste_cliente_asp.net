@@ -9,18 +9,22 @@ namespace CadastroClienteBff.Database
         public DbSet<Cliente> Cliente { get; set; }
         public static String dadosDeAcesso()
         {
-            //String servidor = Environment.GetEnvironmentVariable("SERVIDOR");
-            //String usuario = Environment.GetEnvironmentVariable("USUARIO");
-            //String senha = Environment.GetEnvironmentVariable("SENHA");
-            //String porta = Environment.GetEnvironmentVariable("PORTA");
-            //String banco = Environment.GetEnvironmentVariable("DATABASE");
-
-            String servidor = "localhost";
-            String usuario = "root";
-            String senha = "123";
-            String porta = "3306";
-            String banco = "inicial";
-            return $"server={servidor}; port={porta}; database={banco}; uid={usuario}; password={senha};Allow User Variables=False";
+            
+            var servidor = "localhost";
+            var usuario = "root";
+            var senha = "123";
+            var porta = "3306";
+            var banco = "inicial";
+            var auxVsar = Environment.GetEnvironmentVariable("SERVIDOR");
+            if (auxVsar != null && String.Empty.CompareTo(auxVsar) != 0){
+                servidor = auxVsar;
+                usuario = Environment.GetEnvironmentVariable("USUARIO");
+                senha = Environment.GetEnvironmentVariable("SENHA");
+                porta = Environment.GetEnvironmentVariable("PORTA");
+                banco = Environment.GetEnvironmentVariable("BANCO");
+            }
+            var resposta = $"server={servidor}; port={porta}; database={banco}; uid={usuario}; password={senha};Allow User Variables=False";
+            return resposta;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

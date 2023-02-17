@@ -5,10 +5,15 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SERVIDOR": "127.0.0.1",
+        "USUARIO": "root",
+        "SENHA": "123",
+        "PORTA": "3306",
+        "BANCO": "inicial"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://localhost:5222"
+      "applicationUrl": "http://localhost"
     },
     "IIS Express": {
       "commandName": "IISExpress",
