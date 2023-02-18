@@ -1,0 +1,38 @@
+[
+  {
+    "nome": "C1",
+    "cpfCnpj": "102.962.390-20",
+    "tipoDocumento": 1,
+    "dataNascimento": "1989-07-23"
+  },
+  {
+    "nome": "C2",
+    "cpfCnpj": "10296239020",
+    "tipoDocumento": 1,
+    "dataNascimento": "1989-07-23"
+  },
+  {
+    "nome": "C3",
+    "cpfCnpj": "088.207.710-47",
+    "tipoDocumento": 1,
+    "dataNascimento": "1989-07-23"
+  },
+  {
+    "nome": "C4",
+    "cpfCnpj": "469.858.010-21",
+    "tipoDocumento": 1,
+    "dataNascimento": "1989-07-23"
+  },
+  {
+    "nome": "C5",
+    "cpfCnpj": "469.858.010-20",
+    "tipoDocumento": 1,
+    "dataNascimento": "1989-07-23"
+  },
+  {
+    "nome": "C6",
+    "cpfCnpj": "851.529.360-97",
+    "tipoDocumento": 1,
+    "dataNascimento": "1989-07-23"
+  }
+]

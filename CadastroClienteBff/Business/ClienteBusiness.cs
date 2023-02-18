@@ -2,6 +2,7 @@
 using CadastroClienteBff.Database;
 using CadastroClienteBff.Model;
 using System.Data.SqlTypes;
+using System.Drawing;
 
 namespace CadastroClienteBff.Business
 {
@@ -10,21 +11,44 @@ namespace CadastroClienteBff.Business
         private ContextoBanco cx = new ContextoBanco();
         public void salvarCliente(Cliente cliente)
         {
-            var teste = cx.Cliente;
+            NormalizarDocumento(cliente);
+            var dbCliente = cx.Cliente;
             if (verificaDataNascimento(cliente))
                 throw new HttpResponseException(400, new ResponseData() { codError = 3, Message = "Data de nascimento deve ser menor do que a data atual" });
             if (!documentoValido(cliente))
-                throw new HttpResponseException(400, new ResponseData() { codError = 1, Message = "CPF/CNPJ inválido" });
+                throw new HttpResponseException(400, new ResponseData() { codError = 1, Message = $"{AplicarMascaraDocumento(cliente)} inválido e/ou tipo de documento escolhido errado" });
             if (verificarSeJaExiste(cliente))
-                throw new HttpResponseException(400, new ResponseData() { codError = 2, Message = "CPF/CNPJ Já cadastrado" });
-            teste.Add(cliente);
+                throw new HttpResponseException(400, new ResponseData() { codError = 2, Message = $"{AplicarMascaraDocumento(cliente)} já cadastrado" });
+            dbCliente.Add(cliente);
             cx.SaveChanges();
+        }
+
+        private string AplicarMascaraDocumento(Cliente c)
+        {
+            switch (c.tipoDocumento) {
+                case Model.Enums.TipoDocumento.Cpf:
+                    return "CPF "+Int64.Parse(c.CpfCnpj).ToString(@"000\.000\.000\-00");
+                case Model.Enums.TipoDocumento.CNPJ:
+                    return "CNPJ " + Int64.Parse(c.CpfCnpj).ToString(@"00\.000\.000\/0000\-00");
+                default:
+                    return "CPF/CNPJ "+c.CpfCnpj;
+            }
+        }
+
+        private static void NormalizarDocumento(Cliente cliente)
+        {
+            cliente.CpfCnpj = cliente.CpfCnpj.Replace(".", "");
+            cliente.CpfCnpj = cliente.CpfCnpj.Replace("_", "");
+            cliente.CpfCnpj = cliente.CpfCnpj.Replace("-", "");
+            cliente.CpfCnpj = cliente.CpfCnpj.Replace("/", "");
+            cliente.CpfCnpj = cliente.CpfCnpj.Replace("\\", "");
         }
 
         public List<Cliente> getListaClientes()
         {
             return cx.Cliente.ToList();
         }
+        
         private bool verificaDataNascimento(Cliente c)
         {
             return c.dataNascimento > DateOnly.FromDateTime(DateTime.Now);
@@ -35,14 +59,15 @@ namespace CadastroClienteBff.Business
         }
 
         private bool documentoValido(Cliente c){
-            switch (c.tipoDocumento)
+            var tipo = (Model.Enums.TipoDocumento) c.tipoDocumento;
+            switch (tipo)
             {
                 case Model.Enums.TipoDocumento.Cpf:
                     return ValidaCPF(c.CpfCnpj.PadLeft(11,'0'));
                 case Model.Enums.TipoDocumento.CNPJ:
                     return ValidaCNPJ(c.CpfCnpj.PadLeft(14,'0'));
                 default:
-                    return true;
+                    return false;
             }
         }
 
@@ -59,9 +84,16 @@ namespace CadastroClienteBff.Business
             if (igual || valor == "12345678909")
                 return false;
             int[] numeros = new int[11];
-            for (int i = 0; i < 11; i++)
-                numeros[i] = int.Parse(
-                  valor[i].ToString());
+            try
+            {
+                for (int i = 0; i < 11; i++)
+                    numeros[i] = int.Parse(
+                      valor[i].ToString());
+            }catch(FormatException ex)
+            {
+                return false;
+            }
+            
             int soma = 0;
             for (int i = 0; i < 9; i++)
                 soma += (10 - i) * numeros[i];

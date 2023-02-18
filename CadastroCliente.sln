@@ -7,9 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CadastroClienteBff", "Cadas
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2F68053F-0C15-4185-BF17-1BF051F2411E}"
 	ProjectSection(SolutionItems) = preProject
+		CadastroCliente.json = CadastroCliente.json
 		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Arquivos para testes", "Arquivos para testes", "{3E8C21B8-41FA-4717-A62E-A4F16AAD624F}"
+	ProjectSection(SolutionItems) = preProject
+		CadastroCliente.json = CadastroCliente.json
 	EndProjectSection
 EndProject
 Global
@@ -25,6 +31,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3E8C21B8-41FA-4717-A62E-A4F16AAD624F} = {2F68053F-0C15-4185-BF17-1BF051F2411E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {658BFD18-0CD2-433D-9D27-ACF083D8A40E}
