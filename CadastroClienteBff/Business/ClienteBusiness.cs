@@ -12,11 +12,11 @@ namespace CadastroClienteBff.Business
         {
             var teste = cx.Cliente;
             if (verificaDataNascimento(cliente))
-                throw new HttpResponseException(400, new HttpException() { codErro = 3, mensagem = "Data de nascimento deve ser menor do que a data atual" });
+                throw new HttpResponseException(400, new ResponseData() { codError = 3, Message = "Data de nascimento deve ser menor do que a data atual" });
             if (!documentoValido(cliente))
-                throw new HttpResponseException(400, new HttpException() { codErro = 1, mensagem = "CPF/CNPJ inválido" });
+                throw new HttpResponseException(400, new ResponseData() { codError = 1, Message = "CPF/CNPJ inválido" });
             if (verificarSeJaExiste(cliente))
-                throw new HttpResponseException(400, new HttpException() { codErro = 2, mensagem = "CPF/CNPJ Já cadastrado" });
+                throw new HttpResponseException(400, new ResponseData() { codError = 2, Message = "CPF/CNPJ Já cadastrado" });
             teste.Add(cliente);
             cx.SaveChanges();
         }

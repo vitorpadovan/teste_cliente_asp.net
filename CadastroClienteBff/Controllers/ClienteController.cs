@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CadastroClienteBff.Business;
+using CadastroClienteBff.Config.Exceptions;
 using CadastroClienteBff.Controllers.Contracts.Request;
 using CadastroClienteBff.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ namespace CadastroClienteBff.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ClienteController
+    public class ClienteController : ControllerBase
     {
         ClienteBusiness c = new ClienteBusiness();
 
@@ -16,6 +17,8 @@ namespace CadastroClienteBff.Controllers
         [HttpPost(Name = "SalvarCliente")]
         public Cliente salvarCliente(SalvarClienteRequest request)
         {
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(1, "Chato");
             var configuration = new MapperConfiguration(cfg =>
             {
                 cfg.CreateMap<Cliente, SalvarClienteRequest>();
