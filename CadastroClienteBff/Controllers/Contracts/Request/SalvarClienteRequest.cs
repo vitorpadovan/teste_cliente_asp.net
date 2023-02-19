@@ -22,5 +22,19 @@ public class SalvarClienteRequest
 
     [Display(Name = "Release Date")]
     public DateOnly? dataNascimento { get; set; }
-}
+    
+    [Display(Name = "CEP")]
+    [Required(ErrorMessage = "{0} não informado")]
+    [StringLength(9, ErrorMessage = "{0} deve ter entre {2} e {1} caracteres.", MinimumLength = 8)]
+    public string? cep { get; set; }
 
+    [Display(Name = "Endereço")]
+    [Required(ErrorMessage = "{0} não informado")]
+    [StringLength(150, ErrorMessage = "{0} deve ter entre {2} e {1} caracteres.", MinimumLength = 4)]
+    public string? endereco { get; set; }
+
+    [Display(Name = "Número")]
+    [Required(ErrorMessage = "{0} não informado")]
+    [Range(minimum:1, maximum:Double.MaxValue,ErrorMessage = "{0} deve ter entre {2} e {1}.")]
+    public int? numero { get; set; }
+}

@@ -1,8 +1,7 @@
 ﻿using CadastroClienteBff.Config.Exceptions;
 using CadastroClienteBff.Database;
 using CadastroClienteBff.Model;
-using System.Data.SqlTypes;
-using System.Drawing;
+using CadastroClienteBff.Config.Extensions;
 
 namespace CadastroClienteBff.Business
 {
@@ -11,7 +10,9 @@ namespace CadastroClienteBff.Business
         private ContextoBanco cx = new ContextoBanco();
         public void salvarCliente(Cliente cliente)
         {
-            NormalizarDocumento(cliente);
+            //NormalizarDocumento(cliente);
+            cliente.CpfCnpj = cliente.CpfCnpj.ToNormalizeString();
+            cliente.cep = cliente.cep.ToNormalizeString();
             var dbCliente = cx.Cliente;
             if (verificaDataNascimento(cliente))
                 throw new HttpResponseException(400, new ResponseData() { codError = 3, Message = "Data de nascimento deve ser menor do que a data atual" });
@@ -27,23 +28,13 @@ namespace CadastroClienteBff.Business
         {
             switch (c.tipoDocumento) {
                 case Model.Enums.TipoDocumento.Cpf:
-                    return "CPF "+Int64.Parse(c.CpfCnpj).ToString(@"000\.000\.000\-00");
+                    return "CPF "+ c.CpfCnpj.MaskNumber(@"000\.000\.000\-00");
                 case Model.Enums.TipoDocumento.CNPJ:
-                    return "CNPJ " + Int64.Parse(c.CpfCnpj).ToString(@"00\.000\.000\/0000\-00");
+                    return "CNPJ " + c.CpfCnpj.MaskNumber(@"00\.000\.000\/0000\-00");
                 default:
                     return "CPF/CNPJ "+c.CpfCnpj;
             }
         }
-
-        private static void NormalizarDocumento(Cliente cliente)
-        {
-            cliente.CpfCnpj = cliente.CpfCnpj.Replace(".", "");
-            cliente.CpfCnpj = cliente.CpfCnpj.Replace("_", "");
-            cliente.CpfCnpj = cliente.CpfCnpj.Replace("-", "");
-            cliente.CpfCnpj = cliente.CpfCnpj.Replace("/", "");
-            cliente.CpfCnpj = cliente.CpfCnpj.Replace("\\", "");
-        }
-
         public List<Cliente> getListaClientes()
         {
             return cx.Cliente.ToList();

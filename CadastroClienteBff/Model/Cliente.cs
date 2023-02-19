@@ -9,6 +9,9 @@ namespace CadastroClienteBff.Model
         public string CpfCnpj { get; set; }
         public TipoDocumento tipoDocumento { get; set; }
         public DateOnly dataNascimento { get; set; }
+        public string cep { get; set; }
+        public string endereco { get; set; }
+        public int numero { get; set; }
 
     }
 }
