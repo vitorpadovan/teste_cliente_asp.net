@@ -18,16 +18,22 @@ namespace CadastroClienteBff.Business
         private ContextoBanco cx = new ContextoBanco();
         public void SalvarCliente(Cliente cliente){
             //NormalizarDocumento(cliente);
-            cliente.CpfCnpj = cliente.CpfCnpj.ToNormalizeString();
-            cliente.cep = cliente.cep.ToNormalizeString();
-            var dbCliente = cx.Cliente;
             
+            var dbCliente = cx.Cliente;
+            cliente = NormalizarCliente(cliente);
             VerificaDataNascimento(cliente);
             ValidarDocumento(cliente);
             VerificarSeJaExiste(cliente);
 
             dbCliente.Add(cliente);
             cx.SaveChanges();
+        }
+
+        private Cliente NormalizarCliente(Cliente cliente)
+        {
+            cliente.CpfCnpj = cliente.CpfCnpj.ToNormalizeString();
+            cliente.cep = cliente.cep.ToNormalizeString();
+            return cliente;
         }
 
         private string AplicarMascaraDocumento(Cliente c){
@@ -54,26 +60,29 @@ namespace CadastroClienteBff.Business
             return true;
         }
 
-        public Cliente AtualizarCliente(int id, Cliente cliente){
-            var clienteOriginal = GetCliente(id);
-            clienteOriginal.cep = cliente.cep.ToNormalizeString();
-            clienteOriginal.tipoDocumento = cliente.tipoDocumento;
-            clienteOriginal.dataNascimento = cliente.dataNascimento;
-            clienteOriginal.endereco = cliente.endereco;
-            clienteOriginal.Nome = cliente.Nome;
+        public Cliente AtualizarCliente(int id, Cliente clienteNovo){
+            var clienteDoBanco = GetCliente(id);
+
+            clienteNovo = NormalizarCliente(clienteNovo);
+
+            clienteDoBanco.cep = clienteNovo.cep;
+            clienteDoBanco.tipoDocumento = clienteNovo.tipoDocumento;
+            clienteDoBanco.dataNascimento = clienteNovo.dataNascimento;
+            clienteDoBanco.endereco = clienteNovo.endereco;
+            clienteDoBanco.Nome = clienteNovo.Nome;
             //TODO implementar impedimento de alterar CPF caso existir notas emitidas no nome do cliente
 
-            ValidarDocumento(clienteOriginal);
-            VerificaDataNascimento(clienteOriginal);
-            if (clienteOriginal.CpfCnpj != cliente.CpfCnpj){
-                VerificarCpfDuplicadoEmOutroId(id, cliente);
-                clienteOriginal.CpfCnpj = cliente.CpfCnpj.ToNormalizeString();
+            ValidarDocumento(clienteDoBanco);
+            VerificaDataNascimento(clienteDoBanco);
+            if (clienteDoBanco.CpfCnpj != clienteNovo.CpfCnpj){
+                VerificarCpfDuplicadoEmOutroId(id, clienteNovo);
+                clienteDoBanco.CpfCnpj = clienteNovo.CpfCnpj.ToNormalizeString();
             }
                 
 
-            cx.Cliente.Update(clienteOriginal);
+            cx.Cliente.Update(clienteDoBanco);
             cx.SaveChanges();
-            return cliente;
+            return clienteDoBanco;
         }
         public Cliente GetCliente(int id)
         {
