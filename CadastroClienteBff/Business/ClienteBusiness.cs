@@ -56,7 +56,7 @@ namespace CadastroClienteBff.Business
 
         public Cliente AtualizarCliente(int id, Cliente cliente){
             var clienteOriginal = GetCliente(id);
-            clienteOriginal.cep = cliente.cep;
+            clienteOriginal.cep = cliente.cep.ToNormalizeString();
             clienteOriginal.tipoDocumento = cliente.tipoDocumento;
             clienteOriginal.dataNascimento = cliente.dataNascimento;
             clienteOriginal.endereco = cliente.endereco;
@@ -67,7 +67,7 @@ namespace CadastroClienteBff.Business
             VerificaDataNascimento(clienteOriginal);
             if (clienteOriginal.CpfCnpj != cliente.CpfCnpj){
                 VerificarCpfDuplicadoEmOutroId(id, cliente);
-                clienteOriginal.CpfCnpj = cliente.CpfCnpj;
+                clienteOriginal.CpfCnpj = cliente.CpfCnpj.ToNormalizeString();
             }
                 
 
