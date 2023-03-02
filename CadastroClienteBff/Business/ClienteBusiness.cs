@@ -3,7 +3,6 @@ using CadastroClienteBff.Config.Exceptions;
 using CadastroClienteBff.Database;
 using CadastroClienteBff.Model;
 using CadastroClienteBff.Config.Extensions;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
