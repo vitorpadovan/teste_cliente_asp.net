@@ -5,6 +5,8 @@ namespace CadastroClienteBff.Config.Exceptions
 {
     public class HttpResponseExceptionFilter : ActionFilterAttribute
     {
+
+        //TODO deixar ambos com o mesmo tipo de resposta para o front
         public override void OnResultExecuting(ResultExecutingContext context)
         {
             if (!context.ModelState.IsValid)
@@ -33,7 +35,19 @@ namespace CadastroClienteBff.Config.Exceptions
             if (context.Exception is HttpResponseException)
             {
                 var httpResponseException = (HttpResponseException)context.Exception;
-                context.Result = new BadRequestObjectResult(httpResponseException.Value);
+                switch (httpResponseException.StatusCode)
+                {
+                    case 404:
+                        context.Result = new NotFoundObjectResult(httpResponseException.Value);
+                        break;
+                    case 400:
+                        context.Result = new BadRequestObjectResult(httpResponseException.Value);
+                        break;
+                    default:
+                        context.Result = new BadRequestObjectResult(httpResponseException.Value);
+                        break;
+                }
+                
                 context.ExceptionHandled = true;
             }
         }

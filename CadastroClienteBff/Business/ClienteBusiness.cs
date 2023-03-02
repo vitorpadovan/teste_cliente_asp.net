@@ -1,31 +1,37 @@
-﻿using CadastroClienteBff.Config.Exceptions;
+﻿using AutoMapper;
+using CadastroClienteBff.Config.Exceptions;
 using CadastroClienteBff.Database;
 using CadastroClienteBff.Model;
 using CadastroClienteBff.Config.Extensions;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.DataProtection.XmlEncryption;
+using CadastroClienteBff.Config.Const;
 
 namespace CadastroClienteBff.Business
 {
     public class ClienteBusiness
     {
         private ContextoBanco cx = new ContextoBanco();
-        public void salvarCliente(Cliente cliente)
-        {
+        public void SalvarCliente(Cliente cliente){
             //NormalizarDocumento(cliente);
             cliente.CpfCnpj = cliente.CpfCnpj.ToNormalizeString();
             cliente.cep = cliente.cep.ToNormalizeString();
             var dbCliente = cx.Cliente;
-            if (verificaDataNascimento(cliente))
-                throw new HttpResponseException(400, new ResponseData() { codError = 3, Message = "Data de nascimento deve ser menor do que a data atual" });
-            if (!documentoValido(cliente))
-                throw new HttpResponseException(400, new ResponseData() { codError = 1, Message = $"{AplicarMascaraDocumento(cliente)} inválido e/ou tipo de documento escolhido errado" });
-            if (verificarSeJaExiste(cliente))
-                throw new HttpResponseException(400, new ResponseData() { codError = 2, Message = $"{AplicarMascaraDocumento(cliente)} já cadastrado" });
+            
+            VerificaDataNascimento(cliente);
+            ValidarDocumento(cliente);
+            VerificarSeJaExiste(cliente);
+
             dbCliente.Add(cliente);
             cx.SaveChanges();
         }
 
-        private string AplicarMascaraDocumento(Cliente c)
-        {
+        private string AplicarMascaraDocumento(Cliente c){
             switch (c.tipoDocumento) {
                 case Model.Enums.TipoDocumento.Cpf:
                     return "CPF "+ c.CpfCnpj.MaskNumber(@"000\.000\.000\-00");
@@ -35,31 +41,91 @@ namespace CadastroClienteBff.Business
                     return "CPF/CNPJ "+c.CpfCnpj;
             }
         }
-        public List<Cliente> getListaClientes()
+        public List<Cliente> GetListaClientes()
         {
             return cx.Cliente.ToList();
         }
-        
-        private bool verificaDataNascimento(Cliente c)
+
+        public bool DeletarCliente(int id)
         {
-            return c.dataNascimento > DateOnly.FromDateTime(DateTime.Now);
-        }
-        private bool verificarSeJaExiste(Cliente c)
-        {
-            return cx.Cliente.Where(p=>p.CpfCnpj == c.CpfCnpj).Any();
+            Cliente cliente = GetCliente(id);
+            //TODO implementar impedimento caso existir relacionamento com algum orçamento e etc no banco
+            cx.Cliente.Remove(cliente);
+            cx.SaveChanges();
+            return true;
         }
 
-        private bool documentoValido(Cliente c){
+        public Cliente AtualizarCliente(int id, Cliente cliente){
+            var clienteOriginal = GetCliente(id);
+            clienteOriginal.cep = cliente.cep;
+            clienteOriginal.tipoDocumento = cliente.tipoDocumento;
+            clienteOriginal.dataNascimento = cliente.dataNascimento;
+            clienteOriginal.endereco = cliente.endereco;
+            clienteOriginal.Nome = cliente.Nome;
+            //TODO implementar impedimento de alterar CPF caso existir notas emitidas no nome do cliente
+
+            ValidarDocumento(clienteOriginal);
+            VerificaDataNascimento(clienteOriginal);
+            if (clienteOriginal.CpfCnpj != cliente.CpfCnpj){
+                VerificarCpfDuplicadoEmOutroId(id, cliente);
+                clienteOriginal.CpfCnpj = cliente.CpfCnpj;
+            }
+                
+
+            cx.Cliente.Update(clienteOriginal);
+            cx.SaveChanges();
+            return cliente;
+        }
+        public Cliente GetCliente(int id)
+        {
+            var cliente = cx.Cliente.Where(x => x.Id == id).SingleOrDefault();
+            if (cliente == null)
+                throw new HttpResponseException(404, new ResponseData() { codError = (int)ErrorCodes.NaoEncontrado, Message = $@"Cliente com id {id} não encontrado" });
+            return cliente;
+        }
+        private static bool VerificaDataNascimento(Cliente c)
+        {
+            var resposta = c.dataNascimento > DateOnly.FromDateTime(DateTime.Now);
+            if (resposta)
+                throw new HttpResponseException(400, new ResponseData() { codError = (int)ErrorCodes.DataNascimentoErrada, Message = "Data de nascimento deve ser menor do que a data atual" });
+            return resposta;
+        }
+        private bool VerificarSeJaExiste(Cliente c)
+        {
+            var resposta = cx.Cliente.Where(p => p.CpfCnpj == c.CpfCnpj).Any();
+            if(resposta)
+                throw new HttpResponseException(400, new ResponseData() { codError = (int)ErrorCodes.JaCadastrado, Message = $"{AplicarMascaraDocumento(c)} já cadastrado" });
+            return resposta;
+        }
+
+        private bool VerificarCpfDuplicadoEmOutroId(int id, Cliente c)
+        {
+            var pesquisarCpf = cx.Cliente.Where(x => x.CpfCnpj == c.CpfCnpj).SingleOrDefault();
+            if (pesquisarCpf == null)
+                return false; 
+            if (pesquisarCpf.Id != id)
+                throw new HttpResponseException(400, new ResponseData() { codError = (int)ErrorCodes.CpfDuplicado, Message = $"{AplicarMascaraDocumento(c)} já cadastrado com o nome {pesquisarCpf.Nome} e id {pesquisarCpf.Id}" });
+            return false; //Não existe CPF duplicado
+        }
+
+        private bool ValidarDocumento(Cliente c){
             var tipo = (Model.Enums.TipoDocumento) c.tipoDocumento;
+            var resultado = true;
             switch (tipo)
             {
                 case Model.Enums.TipoDocumento.Cpf:
-                    return ValidaCPF(c.CpfCnpj.PadLeft(11,'0'));
+                    resultado =  ValidaCPF(c.CpfCnpj.PadLeft(11,'0'));
+                    break;
                 case Model.Enums.TipoDocumento.CNPJ:
-                    return ValidaCNPJ(c.CpfCnpj.PadLeft(14,'0'));
+                    resultado =  ValidaCNPJ(c.CpfCnpj.PadLeft(14,'0'));
+                    break;
                 default:
-                    return false;
+                    resultado =  false;
+                    break;
             }
+            if(!resultado)
+                throw new HttpResponseException(400, new ResponseData() { codError = (int)ErrorCodes.DocumentoErrado, Message = $"{AplicarMascaraDocumento(c)} inválido e/ou tipo de documento escolhido errado" });
+            return resultado;
         }
 
         public static bool ValidaCPF(string vrCPF)

@@ -12,46 +12,54 @@ namespace CadastroClienteBff.Controllers
     [Route("[controller]")]
     public class ClienteController : ControllerBase
     {
-        ClienteBusiness c = new ClienteBusiness();
+        readonly ClienteBusiness _clienteBusiness = new ClienteBusiness();
         private IMapper mapper;
 
-        public ClienteController()
+        public ClienteController(IMapper mapper)
         {
-            this.mapper = ConfigurarMapper();
+            this.mapper = mapper;
         }
 
-        [HttpPost(Name = "SalvarCliente")]
-        public SalvarClienteResponse salvarCliente(SalvarClienteRequest request)
+        [HttpGet("{id}", Name = "Pesquisar Cliente")]
+        public SalvarClienteResponse GetCliente([FromRoute] int id)
+        {
+            return mapper.Map<SalvarClienteResponse>(_clienteBusiness.GetCliente(id));
+        }
+
+        [HttpDelete("{id}", Name = "Deletar Cliente")]
+        public bool DeletarCliente([FromRoute] int id)
+        {
+            return _clienteBusiness.DeletarCliente(id);
+        }
+
+        [HttpPost(Name = "Salvar Cliente")]
+        public SalvarClienteResponse SalvarCliente(SalvarClienteRequest request)
         {
             if (!ModelState.IsValid)
-                throw new HttpResponseException(1, "Chato");
-
+                throw new HttpResponseException(1, "Dados inválidos");
             var cliente = mapper.Map<Cliente>(request);
-            this.c.salvarCliente(cliente);
+            this._clienteBusiness.SalvarCliente(cliente);
             var response = mapper.Map<SalvarClienteResponse>(cliente);
             return response;
         }
 
-        [HttpGet(Name = "GetClientes")]
-        public List<SalvarClienteResponse> getListaCliente()
+        [HttpPut("{id}", Name = "Atualizar Cliente")]
+        public SalvarClienteResponse AtualizarCliente([FromBody] SalvarClienteRequest request, [FromRoute] int id)
         {
-            List<SalvarClienteResponse> response = new List<SalvarClienteResponse>();
-            c.getListaClientes().ForEach((x) => response.Add(mapper.Map<SalvarClienteResponse>(x)));
-            return response;
+            if (!ModelState.IsValid)
+                throw new HttpResponseException(1, "Dados inválidos");
+            var cliente = mapper.Map<Cliente>(request);
+            var resposta = this._clienteBusiness.AtualizarCliente(id, cliente);
+            return mapper.Map<SalvarClienteResponse>(resposta);
+
         }
 
-        private static IMapper ConfigurarMapper()
+        [HttpGet(Name = "GetClientes")]
+        public List<SalvarClienteResponse> GetListaCliente()
         {
-            var configuration = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Cliente, SalvarClienteRequest>();
-                cfg.CreateMap<SalvarClienteRequest, Cliente>();
-                cfg.CreateMap<SalvarClienteResponse, Cliente>();
-                cfg.CreateMap<Cliente, SalvarClienteResponse>();
-            });
-
-            var mapper = configuration.CreateMapper();
-            return mapper;
+            List<SalvarClienteResponse> response = new List<SalvarClienteResponse>();
+            _clienteBusiness.GetListaClientes().ForEach((x) => response.Add(mapper.Map<SalvarClienteResponse>(x)));
+            return response;
         }
     }
 }
