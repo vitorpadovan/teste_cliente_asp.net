@@ -18,4 +18,5 @@ RUN dotnet publish "CadastroClienteBff.csproj" -c Release -o /app/publish /p:Use
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_ENVIRONMENT=Development
 ENTRYPOINT ["dotnet", "CadastroClienteBff.dll"]
