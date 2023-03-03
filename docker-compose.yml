@@ -17,18 +17,19 @@ services:
         condition: service_healthy
     ports:
       - '80:80'
+      - '443:443'
     environment:
       - 'SERVIDOR=${SERVIDOR}'
       - 'USUARIO=${USUARIO}'
       - 'SENHA=${SENHA}'
       - 'PORTA=${PORTA}'
       - 'BANCO=${BANCO}'
-      - 'ASPNETCORE_URLS="https://+;http://+"'
+      - 'ASPNETCORE_URLS=https://+:443;http://+:80'
       - 'ASPNETCORE_HTTPS_PORT=443'
-      - 'ASPNETCORE_Kestrel__Certificates__Default__Password=vitor237'
-      - 'ASPNETCORE_Kestrel__Certificates__Default__Path=c:\https\aspnetapp.pfx'
+      - 'ASPNETCORE_Kestrel__Certificates__Default__Password=${SENHACERT}'
+      - 'ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx'
     volumes:
-      - '.aspnet\https:C:\https\'
+      - '~/.aspnet/https:/https:ro'
   mysqlsrv:
     image: 'mysql:5.7.41-debian'
     container_name: cliente_db
