@@ -8,7 +8,9 @@ Em desenvolvimento...
 ### 2.1. Gerar certificados
 
 Necessário gerar certificados com os comandos abaixo, onde ele irá ficar na hora de gerar não é necessário ser específico, porem o arquivo ```aspnetapp.pfx``` deve estar dentro da pasta ```/https/``` dentro do docker depois, através de mapeamento no docker compose
+
 ```dotnet dev-certs https -ep %USERPROFILE%\.aspnet\https\aspnetapp.pfx -p <CREDENTIAL_PLACEHOLDER>```
+
 ```dotnet dev-certs https --trust```
 
 ### 2.2. Mapeando a pasta para o docker
