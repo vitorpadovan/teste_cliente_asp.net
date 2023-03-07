@@ -1,0 +1,47 @@
+#docker pull mcr.microsoft.com/dotnet/samples:aspnetapp
+#docker run --rm -it 
+#-p 8000:80 -p 8001:443 
+#-e ASPNETCORE_URLS="https://+;http://+" 
+#-e ASPNETCORE_HTTPS_PORT=8001 
+#-e ASPNETCORE_Kestrel__Certificates__Default__Password="<CREDENTIAL_PLACEHOLDER>" 
+#-e ASPNETCORE_Kestrel__Certificates__Default__Path=c:\https\aspnetapp.pfx 
+#-v %USERPROFILE%\.aspnet\https:C:\https\ --user ContainerAdministrator mcr.microsoft.com/dotnet/samples:aspnetapp
+
+version: '3.3'
+services:
+  apiservice:
+    build: .
+    container_name: cliente_api
+    depends_on:
+      mysqlsrv:
+        condition: service_healthy
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      - 'SERVIDOR=${SERVIDOR}'
+      - 'USUARIO=${USUARIO}'
+      - 'SENHA=${SENHA}'
+      - 'PORTA=${PORTA}'
+      - 'BANCO=${BANCO}'
+      # - 'ASPNETCORE_URLS=https://+:443;http://+:80'
+      # - 'ASPNETCORE_HTTPS_PORT=443'
+      # - 'ASPNETCORE_Kestrel__Certificates__Default__Password=${SENHACERT}'
+      # - 'ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx'
+    volumes:
+      - '~/.aspnet/https:/https:ro'
+  mysqlsrv:
+    image: 'mysql:5.7.41-debian'
+    container_name: cliente_db
+    ports:
+      - '3306:3306'
+    environment:
+      - 'MYSQL_ROOT_PASSWORD=${SENHA}'
+      - 'MYSQL_DATABASE=${BANCO}'
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 15
+    volumes:
+      - '/home/vitorpadovan/data:/var/lib/mysql'
